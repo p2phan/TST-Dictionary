@@ -119,7 +119,18 @@ bool DictionaryTrie::insert(std::string word, unsigned int freq)
 
 
   for(unsigned int i = 0; i<word.length(); i++ ) {
-    c =  word[i];
+
+    c =  word[i]; 
+
+    //check to see if c is valid
+    if(c < 'a' || 'z' < c){
+      if( c != ' '){
+        std::cout << "Invalid Input. Please retry with correct input" <<
+                std::endl;
+        return false;
+      }
+    } 
+
     // Traversal will either return node that in which 
     // the node's data is equal to the current c
     // Or it will return the last node in which we 
@@ -149,6 +160,7 @@ bool DictionaryTrie::insert(std::string word, unsigned int freq)
         return true;
       }
 
+
     }
 
     // If the one we want to go is the mid Node
@@ -177,7 +189,7 @@ bool DictionaryTrie::insert(std::string word, unsigned int freq)
   if(curr->isWord){
     // is there is already a word we will update freq and
     // return false
-    curr->freq = freq;
+    if( curr-> freq < freq) {curr->freq = freq;}
     return false;
   }
 
@@ -200,8 +212,19 @@ bool DictionaryTrie::find(std::string word) const
 
   for(unsigned int i = 0; i < word.length() ; i++)
   {
+
     c = word[i];
-  
+
+    //check to see if c is valid
+    if(c < 'a' || 'z' < c){
+      if( c != ' '){
+        std::cout << "Invalid Input. Please retry with correct input" <<
+                std::endl;
+        return false;
+      }
+    } 
+
+ 
     // traversal either returns node with same letter
     // or a null pointer
     TrieNode* check = traverseTrie(curr, c);
