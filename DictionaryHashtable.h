@@ -33,6 +33,8 @@ public:
 
 private:
   // Add your own data members and methods here
+
+  //This is where we store the strings, which implements a hashtable
   std::unordered_set<std::string> HASHDict;  
 };
 

@@ -10,6 +10,8 @@ DictionaryBST::DictionaryBST(){
 /* Insert a word into the dictionary. */
 bool DictionaryBST::insert(std::string word)
 {
+  // Insert returns a pair, the second value is bool
+  // So we return that
   auto in = BSTDict.insert(word);
   return in.second;
 }
@@ -18,11 +20,13 @@ bool DictionaryBST::insert(std::string word)
 bool DictionaryBST::find(std::string word) const
 {
   std::set<std::string>::iterator get = BSTDict.find(word);
-  if(*get == word){
-    return true;
+  // If the iterator return what is not the word or
+  // If it reaches out of Bounds then it is false
+  if(get==BSTDict.end() || *get != word){
+    return false;
   }
   
-  return false;
+  return true;
 
 }
 

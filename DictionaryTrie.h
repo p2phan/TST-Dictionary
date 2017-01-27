@@ -27,10 +27,21 @@ public:
   /* Insert a word with its frequency into the dictionary.
    * Return true if the word was inserted, and false if it
    * was not (i.e. it was already in the dictionary or it was
-   * invalid (empty string) */
+   * invalid (empty string) 
+   * 
+   * Paremters:
+   *     word: string to insert
+   *     freq: freq of that string
+   *
+   * */
   bool insert(std::string word, unsigned int freq);
 
-  /* Return true if word is in the dictionary, and false otherwise */
+  /* Return true if word is in the dictionary, and false otherwise 
+   * 
+   * Parameters:
+   *     word: string to find, this is const so we don't
+   *     accidently mess up the string while searching
+   * */
   bool find(std::string word) const;
 
   /* Return up to num_completions of the most frequent completions
@@ -51,29 +62,89 @@ public:
 
 private:
   // Add your own data members and methods here
-  //This will be the root of the ternary tree
+
+  /*This will be the root of the ternary tree*/
   TrieNode* root;
+
+  /** Helper function for insert and find 
+   *  that will traverse the tree until either the node 
+   *  matches the letter or everything else is null
+   *  
+   *
+   *  Return the node with either the same char
+   *  or the node in which it's supposed to go 
+   *  left or right but they are null
+   *
+   *  Parameters:
+   *      get: this is the node to search through
+   *      c: this is the char that we are looking through
+   *      the nodes for
+   *
+   */
   TrieNode* traverseTrie(TrieNode* get, char c) const;
-  TrieNode* addNode(std::string word, int i, unsigned int freq);
+
+  /** Helper function for insert 
+   *  
+   *  Returns the beginning of added subtrie
+   *
+   *  Parameter:
+   *      word: word to made nodes out of
+   *      i: position from which to start makin a node chain
+   *      freq: frequency to update end of chain
+   *
+   *  Effect: returns a chain of Nodes from char of the string
+   *  from i to the end 
+   */ 
+  TrieNode* addNode(std::string word, unsigned int i, unsigned int freq);
+
+  /** This is a helper function to the desctructor
+   *  
+   *  Parameter: 
+   *      n: this is the root of the trie in which we will
+   *      delete all nodes
+   *
+   *
+   *  We will do a post-order traversal and this will free all memory
+   *
+   */ 
   static void deleteAll(TrieNode* n);
 };
 
 class TrieNode
 {
 public:
-  /** default constructor 
-   *  Node's default is false and set Char
+  /** default constructor
+   *  Mid, left and right pointer are default to nullptr
+   *  Each node is is set to not a word
+   *  Freq is 0
    */
   TrieNode(const char c) : mid(nullptr), left(nullptr),
                            right(nullptr), letter(c),
                            isWord(false), freq(0){}
    
   //the three nodes are part of the structure of the ternary search tree
+  /* Middle Node contains next letter of the word  */
   TrieNode* mid; 
+
+  /* contains Node holding letter that is smaller than our letter */
   TrieNode* left;
+
+  /* contains Node holding letter that is bigger than our letter */
   TrieNode* right;  
-  char const letter; // this will hold the letter of the word
+
+  /* holds letter in a word */
+  char const letter; 
+
+  /* Node containing last letter of word stored is true
+   * Default is false
+   */
   bool isWord; 
+
+  /* Hold frequency of a word, 
+   * Like isWord, should be stored in Node that holds last letter
+   * of the word
+   * Default is 0
+   */
   unsigned int freq;
 };
 
