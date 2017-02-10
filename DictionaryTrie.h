@@ -8,6 +8,8 @@
 #define DICTIONARY_TRIE_H
 
 #include <vector>
+#include <queue>
+#include <set>
 #include <string>
 
 class TrieNode;
@@ -97,6 +99,11 @@ private:
    */ 
   TrieNode* addNode(std::string word, unsigned int i, unsigned int freq);
 
+  std::set<std::pair<unsigned int, std::string>>* 
+  getWords(std::set<std::pair<unsigned int, std::string>>* top, 
+           TrieNode* check, std::string word, 
+           unsigned int num_completions);
+  
   /** This is a helper function to the desctructor
    *  
    *  Parameter: 

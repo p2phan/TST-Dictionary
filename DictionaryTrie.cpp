@@ -23,7 +23,9 @@ TrieNode* DictionaryTrie::traverseTrie(TrieNode* get, char c) const
   
   TrieNode* curr = get;
   // We check condition of mid because we don't want to step in yet
-  while(curr->mid){
+  //  while(curr->mid){
+  while(curr->right || curr-> left){
+
     TrieNode* temp = curr;
 
     //if and else if updates based on comparision to c
@@ -48,6 +50,9 @@ TrieNode* DictionaryTrie::traverseTrie(TrieNode* get, char c) const
     }
   }
 
+  //if we reach node with no mid but
+
+  
   //we are at the node we want so we return it
   return curr;
 }
@@ -260,6 +265,48 @@ bool DictionaryTrie::find(std::string word) const
   return curr->isWord;
 }
 
+std::set<std::pair<unsigned int, std::string>>* DictionaryTrie::getWords( 
+          std::set<std::pair<unsigned int, std::string>>* top, 
+          TrieNode* check, std::string word, 
+          unsigned int num_completions)
+{
+  if(!check) {return top;}
+ 
+
+    if(check->isWord){
+
+    std::cout << top->size()<< std::endl;
+      if(num_completions <= top->size()) {
+        std::set<std::pair<unsigned int, std::string>>::iterator it = 
+                                 top->begin();
+    
+        if(it != top->end() && (*it).first < check->freq) {
+          top->erase(it);
+          top->insert(
+              std::pair<unsigned int, std::string>(check->freq, 
+                word+check->letter));
+
+        }
+      }
+
+      else {
+          std::cout << "we insert " << word << " to top" << std::endl;
+        top->insert(
+              std::pair<unsigned int, std::string>(check->freq, 
+                 (word+check->letter)));
+      }
+    }
+    std::cout << word<< " in left" << std::endl;
+    top = getWords(top, check->left, word, num_completions);       
+    std::cout << word<< " in mid" << std::endl;
+    top = getWords(top, check->mid, word + check->letter, num_completions);       
+    std::cout << word<< " in irght" << std::endl;
+    top = getWords(top, check->right, word, num_completions);       
+  
+  return top;
+
+}
+
 /* Return up to num_completions of the most frequent completions
  * of the prefix, such that the completions are words in the dictionary.
  * These completions should be listed from most frequent to least.
@@ -273,6 +320,81 @@ bool DictionaryTrie::find(std::string word) const
 std::vector<std::string> DictionaryTrie::predictCompletions(std::string prefix, unsigned int num_completions)
 {
   std::vector<std::string> words;
+
+  std::cout << " in prN_C" << std::endl;
+  // Null case
+  if(!root){ return words;}
+
+  if(prefix == ""){
+    return words;
+  }
+
+  // finding the node that has the prefix
+  TrieNode* curr = root;
+  char c;
+
+  for(unsigned int i = 0; i < prefix.size() ; i++)
+  {
+
+    c = prefix[i];
+
+    //check to see if c is valid
+    if(c < 'a' || 'z' < c){
+      if( c != ' '){
+        std::cout << "Invalid Input. Please retry with correct input" <<
+                std::endl;
+        return words;
+      }
+    } 
+
+ 
+    // traversal either returns node with same letter
+    // or a null pointer
+    TrieNode* check = traverseTrie(curr, c);
+
+    //check if node is supposed to go left or right
+    if(c < check->letter) {
+      curr = check->left;
+    }
+   
+    else if (check->letter < c) {
+      curr = check->right;    
+    }
+
+    // Checks if we reached the end of our word first
+    // otherwise it updates
+    else {
+      if(i == prefix.size()-1) {
+        curr = check;
+        break;
+      }
+      else {
+        curr = check->mid;
+      }
+    }
+ 
+    // If curr is null at all then it will return false
+    // Otherwise, there will be a seg fault
+    if(!curr){ return words;}
+  }    
+  std::cout << " after find" << std::endl;
+  /*std::set<std::pair<unsigned int, std::string>> top, 
+          std::vector<TrieNode*> check,
+          std::string word, unsigned int num_completions*/
+//account for current
+//change getWords
+  std::set<std::pair<unsigned int, std::string>>* top; 
+  if(curr->isWord){
+    top->insert(
+           std::pair<unsigned int, std::string>(curr->freq, prefix));
+  }
+  top = getWords(top, curr->mid, prefix, num_completions);
+  auto it = top->begin();
+  //auto end= top.end;
+  for( ; it != top->end(); it++){
+    words.push_back((*it).second);
+  } 
+  
   return words;
 }
  
