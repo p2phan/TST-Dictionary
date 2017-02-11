@@ -81,7 +81,14 @@ int main(int argc, char* argv[])
     //Goes through int vector and the number at i will be counted
     //towards number of collisions in arr
     int average = 0;
-    int arr[max+1] = {0};
+    int arr[max+1];
+
+    //initilize array to 0's
+    for(int i =0; i < max + 1; i++)
+    {
+        arr[i]=0;   
+    }  
+
     for(int i = 0; (unsigned int)i < collisions1.size(); i++)
     {
         arr[collisions1.at(i)]++;           
@@ -144,7 +151,13 @@ int main(int argc, char* argv[])
 
     //determining how many of each collsions in hashtab;e
     average = 0;
-    int arr2[max+1] = {0};
+    int arr2[max+1];
+    for(int i =0; i < max + 1; i++)
+    {
+        arr2[i]=0;
+    } 
+
+    //adds up total of certain number of collisions in collisions2
     for(int i = 0; (unsigned int)i < collisions2.size(); i++)
     {
         arr2[collisions2.at(i)]++;
@@ -170,7 +183,7 @@ int main(int argc, char* argv[])
          << max << endl;
  
 
-    //Tests for hashfunction
+    /*Tests for hashfunction*/
     vector<string> v;
     v.push_back("to");
     v.push_back("and");
