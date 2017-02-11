@@ -302,7 +302,7 @@ std::set<std::pair<unsigned int, std::string>>* DictionaryTrie::getWords(
                                top->begin();
       //if lowest frequency in set is lower than current node's freq
       //we delete that and insert pair of freq and word
-      if(it != top->end() && (*it).first < check->freq) {
+      if((*it).first < check->freq) {
         top->erase(it);
         top->insert(
             std::pair<unsigned int, std::string>(check->freq, 
