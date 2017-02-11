@@ -129,7 +129,6 @@ bool DictionaryTrie::insert(std::string word, unsigned int freq)
   TrieNode* curr = root;
   char c;
 
-
   //traverse through the tree for each letter until it reaches 
   //dead end or the node of the last letter
   for(unsigned int i = 0; i<word.length(); i++ ) {
@@ -199,14 +198,19 @@ bool DictionaryTrie::insert(std::string word, unsigned int freq)
 
   // We have gone through every node and now
   // we are at the last node
- 
+   
   if(curr->isWord){
     // is there is already a word we will update to larger freq
-    if( curr-> freq < freq) {curr->freq = freq;}
+    if( curr->freq < freq) {curr->freq = freq;}
     return false;
   }
+  //otherwise we update the node
+  else{
+    curr->isWord = true;
+    curr->freq = freq; 
+  }
 
-  curr->isWord = true;
+   
   return true;
 }
 
@@ -285,13 +289,13 @@ bool DictionaryTrie::find(std::string word) const
  *             word:  current word
  *             num_completions: number of words to return
  */
-std::set<std::pair<unsigned int, std::string>>* DictionaryTrie::getWords( 
+void DictionaryTrie::getWords( 
           std::set<std::pair<unsigned int, std::string>>* top, 
           TrieNode* check, std::string word, 
           unsigned int num_completions)
 {
   //null check
-  if(!check) {return top;}
+  if(!check) {return;}
  
   //if the node is word, we add that into top
   if(check->isWord){
@@ -302,6 +306,7 @@ std::set<std::pair<unsigned int, std::string>>* DictionaryTrie::getWords(
                                top->begin();
       //if lowest frequency in set is lower than current node's freq
       //we delete that and insert pair of freq and word
+
       if((*it).first < check->freq) {
         top->erase(it);
         top->insert(
@@ -310,7 +315,8 @@ std::set<std::pair<unsigned int, std::string>>* DictionaryTrie::getWords(
 
       }
     }
-    
+   
+     
     //current node might be skip node so when we confirm that 
     //it's a word, we add letter of current node
     else {
@@ -328,7 +334,7 @@ std::set<std::pair<unsigned int, std::string>>* DictionaryTrie::getWords(
   getWords(top, check->mid, word + check->letter, num_completions);       
   getWords(top, check->right, word, num_completions);       
   
-  return top;
+  return;
 
 }
 

@@ -1,16 +1,23 @@
 #include<iostream>
+#include<fstream>
 #include<string>
 #include<algorithm>
 #include<set>
 #include<cstdlib>
+
 #include "util.h"
 #include "DictionaryTrie.h"
 #include "DictionaryBST.h"
 #include "DictionaryHashtable.h"
 #define LETTERS 26
+
+
 using namespace std;
 
-
+/**
+ * A tester for DictionaryTrie/Hash/BST class
+ * PA2 CSE 100 2016
+ */
 int main(int argc, char** argv)
 {
 
@@ -158,28 +165,50 @@ int main(int argc, char** argv)
   DictionaryTrie my_dt;
   int my_t_bst, my_t_ht, my_tt;
 
+  //words used from checkpoint
+/*  my_words.push_back("basketball");
+  my_words.push_back("asterick");
+  my_words.push_back("basket");
+  my_words.push_back("application");
+  my_words.push_back("a");
+  my_words.push_back("aa");
+  my_words.push_back("aaa");
+  my_words.push_back("aa a");
+  my_words.push_back("app");
+  my_words.push_back("gugglebee");
+  my_words.push_back("waldos");
+  my_words.push_back("are you not entertained");
+  my_words.push_back("never");
+  my_words.push_back("gonna");
+  my_words.push_back("give");
+  my_words.push_back("you");
+  my_words.push_back("up");
+  my_words.push_back("never gonna give you up");*/
   //words used from worksheet
+  my_words.push_back("as");
+  my_words.push_back("ask");
+  my_words.push_back("as a");
   my_words.push_back("apple");
   my_words.push_back("ape");
   my_words.push_back("applet");
   my_words.push_back("cape");
   my_words.push_back("tall");
   my_words.push_back("tap");
+  my_words.push_back("aa a");
   my_words.push_back("tape");
-  my_words.push_back("applier");
+  my_words.push_back("applett");
   my_words.push_back("appliance");
   my_words.push_back("tanline");
 
   //these words are border and out-of bounds cases
   my_nope.push_back("apes");
-  my_nope.push_back("application");
   my_nope.push_back("act");
   my_nope.push_back("acape");
   my_nope.push_back("cap");
   my_nope.push_back("taller");
   my_nope.push_back("talpe");
   my_nope.push_back("applie");
-  my_nope.push_back("applian");
+  my_nope.push_back("appliee");
   my_nope.push_back("apa");
   my_nope.push_back("capt");
   my_nope.push_back("tapt");
@@ -287,36 +316,78 @@ int main(int argc, char** argv)
   my_nit = my_nope.begin();
   my_nen = my_nope.end();
   for(; my_nit != my_nen; ++my_nit)
+  {
+    cout << "Finding: \"" << *my_nit << "\"... ";
+    my_t_bst = my_d_bst.find(*my_nit);
+    my_t_ht = my_d_ht.find(*my_nit);
+    my_tt = my_dt.find(*my_nit);
+    //cout << my_t_bst << " " << my_t_ht << " "<< my_tt << "... ";
+    if(my_t_bst)
     {
-      cout << "Finding: \"" << *my_nit << "\"... ";
-      my_t_bst = my_d_bst.find(*my_nit);
-      my_t_ht = my_d_ht.find(*my_nit);
-      my_tt = my_dt.find(*my_nit);
-      //cout << my_t_bst << " " << my_t_ht << " "<< my_tt << "... ";
-      if(my_t_bst)
-	{
-	  cout << "failed for DictionaryBST... ";
+      cout << "failed for DictionaryBST... ";
+    }
+    if(my_t_ht)
+    {
+      cout << "failed for DictionaryHashset... ";
+    }
+    if(my_tt)
+    {
+      cout << "failed for DictionaryTrie... ";
 	}
-      if(my_t_ht)
-	{
-	  cout << "failed for DictionaryHashset... ";
-	}
-      if(my_tt)
-	{
-	  cout << "failed for DictionaryTrie... ";
-	}
-      if(!my_t_bst && !my_t_ht && !my_tt)
-	{
-	  cout << "PASSED! :D ";
-	}
-      cout << endl;
-    }   
+    if(!my_t_bst && !my_t_ht && !my_tt)
+    {
+      cout << "PASSED! :D ";
+    }
+    cout << endl;
+  }   
+
+  //testing of own tree for predictcompletions
+  vector<string> v = my_dt.predictCompletions("ta", 10);
+  for( auto word: v){
+    cout << word << "\n";
+  }
+
+  //testing of predictCompletetions for a dictionaty tst
+  if(argc == 2){
+    cout << "Attempting to open dictionary files and " 
+         << "constructing TST tree" << endl;
+  
+    DictionaryTrie dt;
+    DictionaryTrie* dict_t = &dt;
+    std::ifstream dict;
+    dict.open(argv[1]);
+    if(!dict.is_open())
+    {
+      cout << "No file was opened. Please try again\n";
+      return -1;  
+    }
+    Utils::load_dict(*dict_t, dict);
+    dict.close();
 
 
+    //change the values of the string as desired to test predictCompletions
+    string pre1 = "t";
+    string pre2 = "ta";
+    string pre3 = "hulle";
+    vector<string> v = dict_t->predictCompletions(pre1, 10);
+    cout << "Predicting Completions for " << pre1 << endl;
+    for( auto word: v){
+      cout << word << "\n";
+    }
 
+    v = dict_t->predictCompletions(pre2, 10);
+    cout << "Predicting Completions for " << pre2 << endl;
+    for( auto word: v){
+      cout << word << "\n";
+    }
 
-
-
+    v = dict_t->predictCompletions(pre3, 10);
+    cout << "Predicting Completions for " << pre3 << endl;
+    for( auto word: v){
+      cout << word << "\n";
+    }
+ 
+  }
   
   return 0;
 }
