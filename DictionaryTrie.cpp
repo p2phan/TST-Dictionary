@@ -1,15 +1,25 @@
 #include "util.h"
 #include "DictionaryTrie.h"
+/**
+ * File: DictionaryTrie.cpp
+ * Purpose: lets user store words in TST implementation
+ * Also, allows users to find top number of words with 
+ * the same prefix.
+ *
+ * Authors: Christine Alvardo and WI2017 Tutors
+ * Peter Phan A1342904 cs100wdh
+ *
+ */
+
 
 /* Create a new Dictionary that uses a Trie back end */
 DictionaryTrie::DictionaryTrie(){ root=nullptr;}
 
-/** Helper function for insert and find 
- *  that will traverse the tree until either the node 
- *  matches the letter or everything else is null
- *  Return the node with either the same char
- *  or the node in which it's supposed to go
- *  left or right but they are null
+/** Helper function for insert and find that will traverse the tree 
+ *  until either the node matches the letter or everything else is null
+ *
+ *  Return the node with either the same char or the node in which 
+ *  it's supposed to go
  *  
  *  Parameters:
  *        get: this is the node to search through
@@ -101,28 +111,27 @@ TrieNode* DictionaryTrie::addNode(std::string word, unsigned int i,
  * Return true if the word was inserted, and false if it
  * was not (i.e. it was already in the dictionary or it was
  * invalid (empty string) 
- * Return true if the word was inserted, and false if it
- * was not (i.e. it was already in the dictionary or it was
- * invalid (empty string) 
  * 
- * Paremters:
+ * Paramters:
  *     word: string to insert
  *     freq: freq of that string
  *
  */
 bool DictionaryTrie::insert(std::string word, unsigned int freq)
 {
-  // null case of root creates the trie
+  // null case of root, creates the trie
   if(root==NULL){
     root = addNode(word, 0, freq); 
     return true; 
   }
 
-
+  //curr to traverse through the trie
   TrieNode* curr = root;
   char c;
 
 
+  //traverse through the tree for each letter until it reaches 
+  //dead end or the node of the last letter
   for(unsigned int i = 0; i<word.length(); i++ ) {
 
     c =  word[i]; 
@@ -145,7 +154,7 @@ bool DictionaryTrie::insert(std::string word, unsigned int freq)
     // For if and else if conditions, we check the node
     // we want to go to, if it's null we create a chain
     // and add it to that spot
-    // if not go go to that spot
+    // if not we go to that spot
     if(c < check->letter){
       if(check->left){
         curr = check->left;
@@ -192,8 +201,7 @@ bool DictionaryTrie::insert(std::string word, unsigned int freq)
   // we are at the last node
  
   if(curr->isWord){
-    // is there is already a word we will update freq and
-    // return false
+    // is there is already a word we will update to larger freq
     if( curr-> freq < freq) {curr->freq = freq;}
     return false;
   }
@@ -212,9 +220,11 @@ bool DictionaryTrie::find(std::string word) const
   // Null case
   if(!root){ return false;}
 
+  //traverse through the tree
   TrieNode* curr = root;
   char c;
 
+  //traverse through the tree for each letter in the string
   for(unsigned int i = 0; i < word.length() ; i++)
   {
 
@@ -265,43 +275,58 @@ bool DictionaryTrie::find(std::string word) const
   return curr->isWord;
 }
 
+
+/**
+ *  Recursive function to help add find words and add them into vector
+ *
+ *  Parameters:
+ *             top: set of pairs to store freq and the current word
+ *             check: current node we are checking
+ *             word:  current word
+ *             num_completions: number of words to return
+ */
 std::set<std::pair<unsigned int, std::string>>* DictionaryTrie::getWords( 
           std::set<std::pair<unsigned int, std::string>>* top, 
           TrieNode* check, std::string word, 
           unsigned int num_completions)
 {
+  //null check
   if(!check) {return top;}
  
+  //if the node is word, we add that into top
+  if(check->isWord){
 
-    if(check->isWord){
-
-    std::cout << top->size()<< std::endl;
-      if(num_completions <= top->size()) {
-        std::set<std::pair<unsigned int, std::string>>::iterator it = 
-                                 top->begin();
-    
-        if(it != top->end() && (*it).first < check->freq) {
-          top->erase(it);
-          top->insert(
-              std::pair<unsigned int, std::string>(check->freq, 
-                word+check->letter));
-
-        }
-      }
-
-      else {
-          std::cout << "we insert " << word << " to top" << std::endl;
+    //case when the size of top is already at num_completions
+    if(num_completions <= top->size()) {
+      std::set<std::pair<unsigned int, std::string>>::iterator it = 
+                               top->begin();
+      //if lowest frequency in set is lower than current node's freq
+      //we delete that and insert pair of freq and word
+      if(it != top->end() && (*it).first < check->freq) {
+        top->erase(it);
         top->insert(
-              std::pair<unsigned int, std::string>(check->freq, 
-                 (word+check->letter)));
+            std::pair<unsigned int, std::string>(check->freq, 
+            word+check->letter));
+
       }
     }
-    std::cout << word<< " in left" << std::endl;
-    top = getWords(top, check->left, word, num_completions);       
-    std::cout << word<< " in mid" << std::endl;
-    top = getWords(top, check->mid, word + check->letter, num_completions);       
-    std::cout << word<< " in irght" << std::endl;
-    top = getWords(top, check->right, word, num_completions);       
+    
+    //current node might be skip node so when we confirm that 
+    //it's a word, we add letter of current node
+    else {
+      top->insert(
+            std::pair<unsigned int, std::string>(check->freq, 
+            (word+check->letter)));
+    }
+  }
+
+
+  //recursive DFS of the TST
+  getWords(top, check->left, word, num_completions);
+  //only the middle node will consider it's parent as part of word
+  //hence word + check->letter
+  getWords(top, check->mid, word + check->letter, num_completions);       
+  getWords(top, check->right, word, num_completions);       
   
   return top;
 
@@ -316,12 +341,18 @@ std::set<std::pair<unsigned int, std::string>>* DictionaryTrie::getWords(
  * The prefix itself might be included in the returned words if the prefix
  * is a word (and is among the num_completions most frequent completions
  * of the prefix)
+ *
+ * Parameters: 
+ *            prefix: start of the word to find words in subtree
+ *            num_completetions: number of words with highest frequncies
+ *            to return
+ *
  */
 std::vector<std::string> DictionaryTrie::predictCompletions(std::string prefix, unsigned int num_completions)
 {
+  //empty vector of strings
   std::vector<std::string> words;
 
-  std::cout << " in prN_C" << std::endl;
   // Null case
   if(!root){ return words;}
 
@@ -329,10 +360,10 @@ std::vector<std::string> DictionaryTrie::predictCompletions(std::string prefix, 
     return words;
   }
 
-  // finding the node that has the prefix
   TrieNode* curr = root;
   char c;
 
+  // finds the node that has the prefix
   for(unsigned int i = 0; i < prefix.size() ; i++)
   {
 
@@ -377,21 +408,23 @@ std::vector<std::string> DictionaryTrie::predictCompletions(std::string prefix, 
     // Otherwise, there will be a seg fault
     if(!curr){ return words;}
   }    
-  std::cout << " after find" << std::endl;
-  /*std::set<std::pair<unsigned int, std::string>> top, 
-          std::vector<TrieNode*> check,
-          std::string word, unsigned int num_completions*/
-//account for current
-//change getWords
-  std::set<std::pair<unsigned int, std::string>>* top; 
+
+  
+  std::set<std::pair<unsigned int, std::string>> top; 
+
+
+  //checks if curr is word then the mid child will be passed 
+  //into recursive function
   if(curr->isWord){
-    top->insert(
+    top.insert(
            std::pair<unsigned int, std::string>(curr->freq, prefix));
   }
-  top = getWords(top, curr->mid, prefix, num_completions);
-  auto it = top->begin();
-  //auto end= top.end;
-  for( ; it != top->end(); it++){
+
+  getWords(&top, curr->mid, prefix, num_completions);
+
+  //puts in words in order from highest to lowest freq
+  auto it = top.rbegin();
+  for( ; it != top.rend(); it++){
     words.push_back((*it).second);
   } 
   

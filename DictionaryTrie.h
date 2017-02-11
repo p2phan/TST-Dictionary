@@ -12,7 +12,13 @@
 #include <set>
 #include <string>
 
+/**
+ * The class for a Node of a TST. It will store
+ * letters, if that node is a word and the frequency of that word
+ *
+ */
 class TrieNode;
+
 /**
  *  The class for a dictionary ADT, implemented as a trie
  *  You may implement this class as either a mulit-way trie
@@ -55,6 +61,11 @@ public:
    * The prefix itself might be included in the returned words if the prefix
    * is a word (and is among the num_completions most frequent completions
    * of the prefix)
+   *
+   * Parameters: 
+   *            prefix: start of the word to find words in subtree
+   *            num_completetions: number of words with highest frequncies
+   *            to return
    */
   std::vector<std::string>
   predictCompletions(std::string prefix, unsigned int num_completions);
@@ -99,6 +110,15 @@ private:
    */ 
   TrieNode* addNode(std::string word, unsigned int i, unsigned int freq);
 
+  /**
+   *  Recursive function to help add find words and add into vector
+   *
+   *  Parameters:
+   *             top: set of pairs to store freq and the current word
+   *             check: current node we are checking
+   *             word:  current word
+   *             num_completions: number of words to return
+   */
   std::set<std::pair<unsigned int, std::string>>* 
   getWords(std::set<std::pair<unsigned int, std::string>>* top, 
            TrieNode* check, std::string word, 
@@ -120,6 +140,7 @@ private:
 class TrieNode
 {
 public:
+
   /** default constructor
    *  Mid, left and right pointer are default to nullptr
    *  Each node is is set to not a word

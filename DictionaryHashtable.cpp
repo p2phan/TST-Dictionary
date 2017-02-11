@@ -1,10 +1,25 @@
 #include "util.h"
 #include "DictionaryHashtable.h"
 
+/**
+ *  File: DictionaryHashtable.cpp
+ *  
+ *  Purpose: Implements a hashtable using an unordered set
+ *
+ *  CSE 100 PA3 C++ Autocomplete
+ *  Authors: Jor-el Briones, Christine Alvarado
+ *  Peter Phan, cs100wdh, A13042904
+ *
+ */
+
 /* Create a new Dictionary that uses a Hashset back end */
 DictionaryHashtable::DictionaryHashtable(){}
 
-/* Insert a word into the dictionary. */
+/* Insert a word into the dictionary. 
+ *
+ * Parameters: 
+ *             word: string to insert to hashtable
+ * */
 bool DictionaryHashtable::insert(std::string word)
 {
   // Insert returns a pair 
@@ -13,7 +28,12 @@ bool DictionaryHashtable::insert(std::string word)
   return in.second;
 }
 
-/* Return true if word is in the dictionary, and false otherwise */
+/* Return true if word is in the dictionary, and false otherwise 
+ *
+ * Parameter:
+ *           word: word to find in hashtable
+ *
+ */
 bool DictionaryHashtable::find(std::string word) const
 {
   auto get = HASHDict.find(word);

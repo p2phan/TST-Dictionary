@@ -1,6 +1,8 @@
 /**
  *  CSE 100 PA3 C++ Autocomplete
  *  Authors: Jor-el Briones, Christine Alvarado
+ *  Peter Phan, cs100wdh, A13042904
+ *
  */
 
 #ifndef DICTIONARY_BST_H
