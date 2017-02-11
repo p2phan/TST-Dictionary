@@ -119,8 +119,7 @@ private:
    *             word:  current word
    *             num_completions: number of words to return
    */
-  std::set<std::pair<unsigned int, std::string>>* 
-  getWords(std::set<std::pair<unsigned int, std::string>>* top, 
+  void getWords(std::set<std::pair<unsigned int, std::string>>* top, 
            TrieNode* check, std::string word, 
            unsigned int num_completions);
   
